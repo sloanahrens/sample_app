@@ -429,6 +429,34 @@ $ bundle exec rspec spec/models/micropost_spec.rb
 
 $ rails generate integration_test micropost_pages
 
+$ git add .
+$ git commit -m "Add user microposts"
+$ git checkout master
+$ git merge user-microposts
+$ git push
+
+$ git push heroku
+$ heroku pg:reset DATABASE
+$ heroku run rake db:migrate
+$ heroku run rake db:populate
+
+
+-------------- Chapter 11 Following users ------------------------
+
+$ git checkout -b following-users
+
+$ rails generate model Relationship follower_id:integer followed_id:integer
+
+$ bundle exec rake db:migrate
+$ bundle exec rake db:test:prepare
+
+$ bundle exec rake db:reset
+$ bundle exec rake db:populate
+$ bundle exec rake db:test:prepare
+
+
+
+
 
 
 
