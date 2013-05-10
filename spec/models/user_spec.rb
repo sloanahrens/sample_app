@@ -8,7 +8,9 @@ describe User do
 
   subject { @user }
 
+
   it { should be_valid }
+
 
   it { should respond_to(:name) }
 
@@ -26,6 +28,7 @@ describe User do
     before { @user.email = " " }
     it { should_not be_valid }
   end
+
 
   it { should respond_to(:email) }
 
@@ -70,6 +73,7 @@ describe User do
     end
   end
 
+
   it { should respond_to(:password_digest)}
   it { should respond_to(:password) }
   it { should respond_to(:password_confirmation) }
@@ -94,6 +98,7 @@ describe User do
     it { should be_invalid }
   end
 
+
   it { should respond_to(:authenticate) }
 
   describe "return value of authenticate method" do
@@ -111,6 +116,7 @@ describe User do
       specify { expect(user_for_invalid_password).to be_false }
     end
   end
+
 
   it { should respond_to(:remember_token) }
 
@@ -131,6 +137,45 @@ describe User do
     end
 
     it { should be_admin }
+  end
+
+
+  it { should respond_to(:microposts) }
+  it { should respond_to(:feed) }
+
+   describe "micropost associations" do
+
+    before { @user.save }
+    let!(:older_micropost) do 
+      FactoryGirl.create(:micropost, user: @user, created_at: 1.day.ago)
+    end
+    let!(:newer_micropost) do
+      FactoryGirl.create(:micropost, user: @user, created_at: 1.hour.ago)
+    end
+
+    it "should have the right microposts in the right order" do
+      expect(@user.microposts.to_a).to eql([newer_micropost, older_micropost])
+    end
+
+    it "should destroy associated microposts" do
+      microposts = @user.microposts.dup.to_a
+      @user.destroy
+      expect(microposts).not_to be_empty
+      microposts.each do |micropost|
+        expect(Micropost.where(id: micropost.id)).to be_empty
+      end
+    end
+
+    describe "status" do
+      let(:unfollowed_post) do
+        FactoryGirl.create(:micropost, user: FactoryGirl.create(:user))
+      end
+
+      its(:feed) { should include(newer_micropost) }
+      its(:feed) { should include(older_micropost) }
+      its(:feed) { should_not include(unfollowed_post) }
+    end
+
   end
 
 end

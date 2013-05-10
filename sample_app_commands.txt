@@ -403,9 +403,31 @@ $ git commit -m "foo"
 $ git push heroku
 
 
+-------------- Chapter 10 User microposts ------------------------
 
+$ git checkout -b user-microposts
 
+$ rails generate model Micropost content:string user_id:integer
 
+db/migrate/[timestamp]_create_microposts.rb:
+class CreateMicroposts < ActiveRecord::Migration
+  def change
+    create_table :microposts do |t|
+      t.string :content
+      t.integer :user_id
+
+      t.timestamps
+    end
+    add_index :microposts, [:user_id, :created_at]
+  end
+end
+
+$ bundle exec rake db:migrate
+$ bundle exec rake db:test:prepare
+
+$ bundle exec rspec spec/models/micropost_spec.rb
+
+$ rails generate integration_test micropost_pages
 
 
 
