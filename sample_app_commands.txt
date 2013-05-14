@@ -454,7 +454,16 @@ $ bundle exec rake db:reset
 $ bundle exec rake db:populate
 $ bundle exec rake db:test:prepare
 
+$ git add .
+$ git commit -m "Add user following"
+$ git checkout master
+$ git merge following-users
 
+$ git push
+$ git push heroku
+$ heroku pg:reset DATABASE
+$ heroku run rake db:migrate
+$ heroku run rake db:populate
 
 
 
